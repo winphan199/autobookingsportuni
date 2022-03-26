@@ -1,10 +1,10 @@
 import fetch from 'node-fetch';
 
-const cookie = '_ga=GA1.2.1324647022.1647096070; _gid=GA1.2.1272627267.1647096070; lb_selection=1541596802.47873.0000; _shibsession_77656270616765732e74756e692e666968747470733a2f2f776562686f74656c342e74756e692e66692f73686962626f6c657468=_b4ef631df28f2d48a267717602c61c03; _gat=1; _gat_tunisites=1';
-const start_date = '2022-03-27'; // yyyy-mm-dd
-const end_date = '2022-03-27'; // yyyy-mm-dd
-const desire_start_times = [12];
-const desire_court_nums = [1, 2, 3];
+const cookie = '_gid=GA1.2.1272627267.1647096070; lb_selection=1541596802.47873.0000; intra_uuid=8729da81-6718-4acb-a9a3-f06f09733d88; _hjSessionUser_1666125=eyJpZCI6ImZhOGE3ZTg4LTg5ZmQtNTBlMy1iZDc5LWExNTE4MTY3ZDY4YiIsImNyZWF0ZWQiOjE2NDc1NDQzODQ0MjksImV4aXN0aW5nIjp0cnVlfQ==; _ga=GA1.2.1324647022.1647096070; _ga_XWBJWEFREF=GS1.1.1647544384.1.1.1647544404.0; _gat=1; _gat_tunisites=1; _shibsession_77656270616765732e74756e692e666968747470733a2f2f776562686f74656c342e74756e692e66692f73686962626f6c657468=_48b23c1534df8f2dda3e69f8968838ef';
+const start_date = '2022-04-02'; // yyyy-mm-dd
+const end_date = '2022-04-02'; // yyyy-mm-dd
+const desire_start_times = [16];
+const desire_court_nums = [5, 2, 4, 3];
 const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=2&a1=false&a2=true&a3=false&a4=false&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
 
 
@@ -16,20 +16,15 @@ let isBooked = false;
 
 
 let startBooking = async () => {
-  await fetch(url_get)
-    .then(res => res.json())
-    .then(text => {
-      if (text.length > 1) {
-        return handleShiftList(text);
-      }
-      else
-        return -1;
-    })
-    .then(shifts=> {
-      if (shifts != -1)
-        handleBookCourt(shifts);
-    })
-    .catch(e=>console.log(e))
+
+  let data = await fetch(url_get);
+  data = await data.json();
+
+  if (data.length > 1) {
+    let shifts = await handleShiftList(data);
+    await handleBookCourt(shifts);
+  }
+
 }
 
 
@@ -52,20 +47,16 @@ let handleShiftList= async (text) => {
 
 let handleBookCourt = async (shifts) => {
 
-  shifts.forEach(shift => {
+  for(let i = 0; i<shifts.length; i++) {
+    const shift = shifts[i];
     const url_event = `https://www.tuni.fi/sportuni/kalenteri/showevent.cgi?lang=en&id=${shift.id}`;
 
 
-    fetch(url_event)
-    .then(res => res.text())
-    .then(text=> {
-
-      return findCourt(text);
-    })
-    .then(courts => {
-      bookCourt(courts);
-    })
-  });
+    let data = await fetch(url_event);
+    data = await data.text();
+    const courts =  findCourt(data);
+    await bookCourt(courts);
+  }
 }
 
 let findCourt = text => {
@@ -85,43 +76,45 @@ let findCourt = text => {
 
 let bookCourt = async courts => {
 
-  courts.forEach(court => {
+  for(let i=0; i<courts.length; i++) {
+    const court = courts[i];
 
     const url_book = `https://www.tuni.fi/sportuni/omasivu/?lang=en&action=badminton&id=${court.court_id}&court=${court.court_num}`
-    fetch(url_book, {
+    let data = await fetch(url_book, {
       headers: {
         cookie: cookie
       }
     })
-    .then(res=>res.text())
-    .then(text => {
-
-      //console.log(text) // response thanh cong || that bai
-      const regex = new RegExp(`Thank you`, 'g');
-      const pos_of_success = text.search(regex);
-      if (pos_of_success < 0) {
-        // book failed
-        console.log('Book khong duoc san')
+    data = await data.text();
+    const regex = new RegExp(`Thank you`, 'g');
+    const pos_of_success = data.search(regex);
+    if (pos_of_success < 0) {
+      // book failed
+      console.log(`Book không được sân ${court.court_num}!`)
+    }
+    else {
+      succeedBookCount++;
+      if (succeedBookCount >= 3) {
+        isBooked = true;
       }
-      else {
-        succeedBookCount++;
-        if (succeedBookCount >= 3) {
-          isBooked = true;
-        }
-        console.log(succeedBookCount);
-        console.log('Book san thanh cong')
-      }
-    })
-
-  })
-}
-
-
-while (!isBooked) {
-  await startBooking();
-  if (isBooked) {
-    console.log("ĐÃ BOOK ĐỦ HẾT SÂN");
-    break;
+      console.log(succeedBookCount);
+      console.log(`Book sân ${court.court_num} thành công!`)
+    }
   }
 }
 
+
+async function bookTillFull() {
+  while (!isBooked) {
+    let data = await startBooking();
+    let a = 99;
+  }
+
+  if (isBooked) {
+    console.log ("ĐÃ BOOK ĐỦ HẾT SÂN!");
+  }
+}
+
+
+
+bookTillFull();
