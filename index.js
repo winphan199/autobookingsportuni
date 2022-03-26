@@ -1,13 +1,16 @@
 import fetch from 'node-fetch';
 
-const cookie = '_gid=GA1.2.1272627267.1647096070; lb_selection=1541596802.47873.0000; intra_uuid=8729da81-6718-4acb-a9a3-f06f09733d88; _hjSessionUser_1666125=eyJpZCI6ImZhOGE3ZTg4LTg5ZmQtNTBlMy1iZDc5LWExNTE4MTY3ZDY4YiIsImNyZWF0ZWQiOjE2NDc1NDQzODQ0MjksImV4aXN0aW5nIjp0cnVlfQ==; _ga=GA1.2.1324647022.1647096070; _ga_XWBJWEFREF=GS1.1.1647544384.1.1.1647544404.0; _gat=1; _gat_tunisites=1; _shibsession_77656270616765732e74756e692e666968747470733a2f2f776562686f74656c342e74756e692e66692f73686962626f6c657468=_48b23c1534df8f2dda3e69f8968838ef';
+// START USER INPUT
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const cookie = '';
 const start_date = '2022-04-02'; // yyyy-mm-dd
 const end_date = '2022-04-02'; // yyyy-mm-dd
 const desire_start_times = [16];
 const desire_court_nums = [5, 2, 4, 3];
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// END USER INPUT
+
 const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=2&a1=false&a2=true&a3=false&a4=false&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
-
-
 // loop until there is available list of bookings
 let succeedBookCount = 0;
 let isBooked = false;
