@@ -3,7 +3,6 @@
 Auto booking tool for SportUni website
 
 ## How it works
----
 
 - This tool will keep running until 3 courts are successfully booked.
 - If the console log out "ĐÃ BOOK ĐỦ HẾT SÂN!" it means you have booked 3 courts.
@@ -11,7 +10,6 @@ Auto booking tool for SportUni website
 - For anyone wants to know how to get the cookie => Read `howtogetcookie.docx` in the folder.
 
 ## Installation
----
 
 Clone the project to your folder
 
@@ -32,7 +30,6 @@ npm install
 ```
 
 ## Execution
----
 
 Add your cookie
 
@@ -66,5 +63,5 @@ Run tool with this command
 node index.js
 ```
 
-## Contributing
+## Contributor
 Hung Phan (WIN DEP TRAI)
