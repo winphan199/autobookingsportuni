@@ -1,19 +1,11 @@
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
- }
+let a = [1, 1, 3, 4]
 
-async function test() {
-    // for(let i=0; i<10; i++) {
-    //     console.log("Hello");
-    //     await sleep(1000);
-    // }
+function abc() {
+    a.some((b, i)=>{
 
-    let i = 0
-    while (i < 10) {
-        console.log("Hello");
-        await sleep(1000);
-        i++;
-    }
+        console.log(i)
+        return b === 1
+    } )
 }
 
-test();
+abc()
