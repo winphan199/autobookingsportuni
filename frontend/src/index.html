@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Auto Book SportUni</title>
+</head>
+<body>
+    <div id="app" class="">
+        <div id="header">
+            <div class="grid wide">
+                <div class="row">
+                    <div class="col l-12 m-12 c-12">
+                        <div class="header__container">
+                            <h1 class="header__title">AutoBooking SportUni tool</h1>
+                            <div class="header__add-new" onclick="inputFormToggle(1)">
+                                <div class="header__add-new-icon">
+                                    <i class="fa-solid fa-file-circle-plus"></i>
+                                </div>
+                                <p class="header__add-new-text">Add new</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="content">
+            <div class="grid wide">
+                <div class="row">
+                    <div class="col l-6 m-6 c-6" id="book-list">
+                    </div>
+                    <div class="col l-6 m-6 c-6">
+                        <div class="result-log">
+                            <div class="result-log__heading">
+                                <h4>Result log</h4>
+                                <div class="clear-log-btn" onclick="clearLog()">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </div>
+                            </div>
+                            <div class="result-log__body">
+                                <span id="result-log-placeholder"></span>
+
+                            </div>
+                        </div>
+                        <div class="btn-container">
+                            <button id="end-btn" onclick="stopBooking(this)" disabled>End</button>
+                            <button id="submit-btn" onclick="submitForm(this)">Start</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-layout">
+            <div class="modal-cover"></div>
+            <div id="input-form" class="input-form">
+                <form action="" method="post" class="form" id="submit-form">
+                    <div class="form-group">
+                        <label for="cookie" class="form-label">Cookie:</label>
+                        <input id="cookie" name="cookie" type="text" class="form-control">
+                        <span class="form-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location" class="form-label">Location:</label>
+                        <select id="location" name="location" class="form-control">
+                            <option value="hervanta">Hervanta</option>
+                            <option value="kauppi">Kauppi</option>
+                            <option value="center">City centre</option>
+                        </select>
+                        <span class="form-message"></span>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="date" class="form-label">Date:</label>
+                        <input id="date" name="date" type="date" class="form-control">
+                        <span class="form-message"></span>
+                    </div>
+                    
+                    <div class="form-container">
+                        <p class="form-container__label">Details:</p>
+                        <div class="form-container--detail">
+                            <div class="add-detail-btn" onclick="addNewDetail()">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+
+                            <div class="detail-container">
+                                <div class="form-group">
+                                    <label for="time" class="form-label form-label--sub">Time:</label>
+                                    <select name="time" class="form-control form-control--sub">
+                                        <option value="6">6 am</option>
+                                        <option value="7">7 am</option>
+                                        <option value="8">8 am</option>
+                                        <option value="9">9 am</option>
+                                        <option value="10">10 am</option>
+                                        <option value="11">11 am</option>
+                                        <option value="12">12 pm</option>
+                                        <option value="13">1 pm</option>
+                                        <option value="14">2 pm</option>
+                                        <option value="15">3 pm</option>
+                                        <option value="16">4 pm</option>
+                                        <option value="17">5 pm</option>
+                                        <option value="18">6 pm</option>
+                                        <option value="19">7 pm</option>
+                                        <option value="20">8 pm</option>
+                                        <option value="21">9 pm</option>
+                                        <option value="22">10 pm</option>
+                                    </select>
+                                    <span class="form-message"></span>
+                                </div>
+    
+                                <p class="form-label">Courts:</p>
+                                <div class="form-group form-group--sub">
+                                    <div class="checkbox-group">
+                                        <div class="checkbox-container">
+                                            <input name="court1" type="checkbox" class="form-control checkbox-item" value="1">
+                                            <label for="court1" class="checkbox-label">Court 1</label>
+                                        </div>
+                                        <div class="checkbox-container">
+                                            <input name="court2" type="checkbox" class="form-control checkbox-item" value="2">
+                                            <label for="court2" class="checkbox-label">Court 2</label>
+                                        </div>
+                                        <div class="checkbox-container">
+                                            <input name="court3" type="checkbox" class="form-control checkbox-item" value="3">
+                                            <label for="court3" class="checkbox-label">Court 3</label>
+                                        </div>
+                                    </div>
+    
+                                    <div class="checkbox-group">
+                                        <div class="checkbox-container">
+                                            <input name="court4" type="checkbox" class="form-control checkbox-item" value="4">
+                                            <label for="court4" class="checkbox-label">Court 4</label>
+                                        </div>
+                                        <div class="checkbox-container">
+                                            <input name="court5" type="checkbox" class="form-control checkbox-item" value="5">
+                                            <label for="court5" class="checkbox-label">Court 5</label>
+                                        </div>
+                                        <div class="checkbox-container">
+                                            <input name="court6" type="checkbox" class="form-control checkbox-item" value="6">
+                                            <label for="court6" class="checkbox-label">Court 6</label>
+                                        </div>
+                                    </div>
+                                    <span class="form-message"></span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button class="option-btn" onclick="inputFormToggle(0)">Cancel</button>
+                        <button class="option-btn" id="add-new-btn" onclick="addNewOption()">Add new</button>
+                        <button class="option-btn" id="edit-btn" onclick="">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        </div>
+</body>
+<script src="./js/main.js"></script>
+<script src="./js/validate.js"></script>
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+<script>
+    
+</script>
+</html>
