@@ -574,6 +574,8 @@ function deleteBookItemFromBookList(id) {
     handleBookListItem();
 }
 
+const baseURL = 'http://ec2-54-254-130-78.ap-southeast-1.compute.amazonaws.com:1999';
+
 // handle submit tobooklist to server
 let socket;
 let firstTime = true;
@@ -584,7 +586,8 @@ async function submitForm(target) {
 
     
     if (firstTime) {
-        socket = io("http://localhost:3000");
+        // socket = io("http://localhost:3000");
+        socket = io(baseURL);
         firstTime = false;
     }
     else {
@@ -600,7 +603,7 @@ async function submitForm(target) {
 
 
     // send to server with post method
-    const url = 'http://localhost:3000/book';
+    const url = baseURL + '/book';
     let data = await fetch(url, {
         method: 'POST',
         headers: {
@@ -624,7 +627,7 @@ async function submitForm(target) {
 
 // stop booking
 async function stopBooking(target) {
-    const url = 'http://localhost:3000/stop';
+    const url = baseURL + '/stop';
     let data = await fetch(url);
 
     data = await data.json();
