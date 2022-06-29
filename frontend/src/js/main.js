@@ -5,45 +5,45 @@ form.onsubmit = (e)=> {
 }
 const bookListContainer = document.querySelector('#book-list');
 const toBookList = [
-    {
-        cookie: '1233',
-        book_id: 0,
-        location: 'hervanta',
-        date: '2022-06-10',
-        booking_details: [
-          {
-            start_time: 11,
-            court_nums: [4, 5]
-          },
-          {
-            start_time: 12,
-            court_nums: [5]
-          },
-          {
-            start_time: 15,
-            court_nums: [2, 3]
-          },
-          {
-            start_time: 16,
-            court_nums: [2]
-          }
-        ],
-      },
-      {
-        book_id: 1,
-        location: 'hervanta',
-        date: '2022-06-12',
-        booking_details: [
-          {
-            start_time: 11,
-            court_nums: [4, 5]
-          },
-          {
-            start_time: 12,
-            court_nums: [5]
-          }
-        ],
-      },
+//     {
+//         cookie: '1233',
+//         book_id: 0,
+//         location: 'hervanta',
+//         date: '2022-06-10',
+//         booking_details: [
+//           {
+//             start_time: 11,
+//             court_nums: [4, 5]
+//           },
+//           {
+//             start_time: 12,
+//             court_nums: [5]
+//           },
+//           {
+//             start_time: 15,
+//             court_nums: [2, 3]
+//           },
+//           {
+//             start_time: 16,
+//             court_nums: [2]
+//           }
+//         ],
+//       },
+//       {
+//         book_id: 1,
+//         location: 'hervanta',
+//         date: '2022-06-12',
+//         booking_details: [
+//           {
+//             start_time: 11,
+//             court_nums: [4, 5]
+//           },
+//           {
+//             start_time: 12,
+//             court_nums: [5]
+//           }
+//         ],
+//       },
 ];
 
 function inputFormToggle(option) {
