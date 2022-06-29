@@ -622,6 +622,9 @@ async function submitForm(target) {
         printToScreen('Max court number (3 courts) exceeded!')
         printToScreen('Booking finished!')
     }
+    else {
+        printToScreen('Error: ' + data.msg)
+    }
     enableBtn(target);
 }
 
