@@ -574,7 +574,7 @@ function deleteBookItemFromBookList(id) {
     handleBookListItem();
 }
 
-const baseURL = 'http://ec2-54-254-130-78.ap-southeast-1.compute.amazonaws.com:1999';
+const baseURL = 'https://3.0.148.2.nip.io';
 
 // handle submit tobooklist to server
 let socket;
