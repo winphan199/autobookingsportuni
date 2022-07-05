@@ -1,0 +1,19 @@
+BEGIN:VCARD
+VERSION:3.0
+FN;CHARSET=UTF-8:Nguyên Thảo Nguyễn
+N;CHARSET=UTF-8:Nguyễn;Nguyên;Thảo;;
+EMAIL;CHARSET=UTF-8;type=HOME,INTERNET:nguyen.nguyen@idtek.com.vn
+EMAIL;CHARSET=UTF-8;type=WORK,INTERNET:info@idtek.com.vn
+LOGO;TYPE=undefined:https://scontent.fdad3-4.fna.fbcdn.net/v/t1.6435-9/165864812_2933160610285745_8859634258068977256_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=730e14&_nc_ohc=MMTQm_9F0HMAX88jYWW&_nc_oc=AQkxCdksMQ61tHJqmyV7mbRvmBOw3JSJnMhC2nia5HBu_KoFQF50DYrzy8m4w756bgc&_nc_ht=scontent.fdad3-4.fna&oh=00_AT9CFoo5tnIH9SYx-XiuXSzaROM7Okdk2QldxvmvpkLrJw&oe=62EB7B3C
+PHOTO;TYPE=undefined:https://scontent.fdad3-4.fna.fbcdn.net/v/t1.6435-9/165864812_2933160610285745_8859634258068977256_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=730e14&_nc_ohc=MMTQm_9F0HMAX88jYWW&_nc_oc=AQkxCdksMQ61tHJqmyV7mbRvmBOw3JSJnMhC2nia5HBu_KoFQF50DYrzy8m4w756bgc&_nc_ht=scontent.fdad3-4.fna&oh=00_AT9CFoo5tnIH9SYx-XiuXSzaROM7Okdk2QldxvmvpkLrJw&oe=62EB7B3C
+TEL;TYPE=HOME,VOICE:+84868498440
+TEL;TYPE=WORK,VOICE:+842862885088
+LABEL;CHARSET=UTF-8;TYPE=HOME:Home Address
+ADR;CHARSET=UTF-8;TYPE=HOME:;;90 Đường 85;Quận 7;Hồ Chí Minh;756700;Việt Nam
+TITLE;CHARSET=UTF-8:Account Manager
+ORG;CHARSET=UTF-8:Công ty cổ phần IDTEK
+URL;CHARSET=UTF-8:https://idtek.com.vn/
+URL;type=WORK;CHARSET=UTF-8:https://idtek.com.vn/
+X-SOCIALPROFILE;CHARSET=UTF-8;TYPE=facebook:https://www.facebook.com/carina.thaonguyen
+REV:2022-07-05T17:23:16.794Z
+END:VCARD

@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const {findDateRange, findLocations} = require('./lib/helper.js')
 const startBooking = require('./lib/autobook.js')
+const vCard = require('./lib/vcard.js')
 const app = express()
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -136,6 +137,15 @@ app.post('/book', async (req, res) => {
 app.get('/book', (req, res) => {
   // console.log(req.body)
   res.send('This is book route')
+})
+
+app.get('/vcard/thao-nguyen', (req, res) => {
+  //set content-type and disposition including desired filename
+  res.set('Content-Type', 'text/vcard; name="thaonguyen.vcf"');
+  res.set('Content-Disposition', 'inline; filename="thaonguyen.vcf"');
+
+  //send the response
+  res.send(vCard.getFormattedString());
 })
 
 
