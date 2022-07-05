@@ -14,6 +14,13 @@ html {
 body {
 
 }
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
 
 :root {
     --brand-color: rgb(100, 94, 94);
@@ -838,6 +845,10 @@ body {
     margin-left: 12px;
     color: rgb(29, 236, 39);
     font-weight: 500;
+}
+
+.result-log__content.result-log__content--error {
+    color: rgb(233, 29, 29);
 }
 
 .modal-layout {

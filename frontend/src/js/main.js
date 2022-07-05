@@ -46,6 +46,11 @@ const toBookList = [
 //       },
 ];
 
+const request = {
+    // Resquest data
+    // Request id
+}
+
 function inputFormToggle(option) {
     if (formContainer) {
         if (formContainer.style.display == 'none' || getComputedStyle(formContainer).display == 'none') {
@@ -473,7 +478,7 @@ function editInputForm(id) {
         rules: [
             Validator.isRequired('#cookie'),
             Validator.isRequired('#date'),
-            Validator.isUnique('#date', toBookList, 'date')
+            Validator.isUnique('#date', toBookList, 'date', id)
         ]
     })
 
@@ -574,106 +579,141 @@ function deleteBookItemFromBookList(id) {
     handleBookListItem();
 }
 
-const baseURL = 'https://3.0.148.2.nip.io';
+// const baseURL = 'https://3.0.148.2.nip.io';
+const baseURL = 'http://localhost:1999';
+let bookRequestToServerInterval;
+let isForceStop = false;
 
 // handle submit tobooklist to server
 let socket;
-let firstTime = true;
 async function submitForm(target) {
     console.log(toBookList);
 
     printToScreen('Start booking...')
 
     
-    if (firstTime) {
-        // socket = io("http://localhost:3000");
-        socket = io(baseURL);
-        firstTime = false;
-    }
-    else {
-        socket.connect()
-    }
+    socket = io(baseURL)
+
+    // add request detail to request
+    request['requestData'] = toBookList;
+
+    // get socket_id on connection to server websocket
+    socket.on("connect", async () => {
+        request['socket_id'] = socket.id;
+
+        //disable start btn while fetching & enable stop btn
+        disableBtn(target)
+        enableBtn(document.querySelector('#end-btn'))
+
+        let bookingAttempt = 0;
+        bookRequestToServerInterval = setInterval(async () => {
+
+            // send request to server with post method
+            const url = baseURL + '/book';
+            let data = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            })
+
+            // convert return data to json
+            data = await data.json();
+            console.log(data);
+            if (data.status == 'Failed') {
+                printToScreen(data.msg, 'error');
+                clearInterval(bookRequestToServerInterval);
+                // enable start btn after fetching done and disable stop btn
+                enableBtn(target);
+                disableBtn(document.querySelector('#end-btn'))
+            }
+
+            if (data.status == 'OK' && data.bookCount >= 3) {
+                printToScreen('Max courts (3 courts) exceeded!');
+            }
+
+            bookingAttempt++;
+            console.log(bookingAttempt)
+
+            if (isForceStop || bookingAttempt >= 50000) {
+                if(isForceStop) {
+                    printToScreen('Booking force stopped!')
+                }
+                isForceStop = false;
+                clearInterval(bookRequestToServerInterval)
+                socket.disconnect()
+                // enable start btn after fetching done and disable stop btn
+                enableBtn(target);
+                disableBtn(document.querySelector('#end-btn'))
+            }
+
+        }, 1000)
+
+    });
+    // listen on result log event to print all the log to screen
     socket.on('result log', (msg) => {
         console.log(msg);
-        printToScreen(msg)
+        if (!isForceStop) {
+            if (typeof msg !== 'object') {
+
+                printToScreen(msg)
+            } else {
+                if (msg[0].court_id == undefined) {
+                    printToScreen('Booking list found!')
+                } else {
+                    printToScreen('Desire court(s) found!')
+                }
+            }
+        }
     })
 
-    disableBtn(target)
-    enableBtn(document.querySelector('#end-btn'))
-
-
-    // send to server with post method
-    const url = baseURL + '/book';
-    let data = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(toBookList)
-    })
-
-    data = await data.json();
-
-    console.log(data);
-    if (data.status == 'OK' && data.isStop == true) {
-        printToScreen('Booking force stopped!')
-    }
-    else if (data.status == 'OK' && data.isStop == false) {
-        printToScreen('Max court number (3 courts) exceeded!')
-        printToScreen('Booking finished!')
-    }
-    else {
-        printToScreen('Error: ' + data.msg)
-    }
-    enableBtn(target);
 }
 
 // stop booking
 async function stopBooking(target) {
-    const url = baseURL + '/stop';
-    let data = await fetch(url);
-
-    data = await data.json();
-    if (data.status == 'OK') {
-        printToScreen('Stop booking request sent!');
-
-        if (socket != undefined && socket.connected) {
-
-            socket.off();
-            socket.disconnect()
-        }
-
-        disableBtn(target);
-    }
-    console.log(data);
-    
-
-
-
-
-
+    isForceStop = true;
     // scroll to bottom
     scrollToBottom();
 }
 
 // handle logging result to the result log
-function printToScreen(message) {
+function printToScreen(message, error) {
     // get the result log placeholder
     const insertPosition = document.getElementById('result-log-placeholder');
     const newInsertPosition = document.querySelectorAll('.result-log__body > .result-log__content:last-child');
-    console.log(newInsertPosition.length)
 
     // check type of msg
     if (typeof message == 'string') {
 
-        // convert message to html
-        message = `<pre class="result-log__content">${message}</pre>`
+        if (error) {
+
+            // convert message to html
+            message = `<pre class="result-log__content result-log__content--error">Error: ${message}</pre>`
+        } else {
+            // convert message to html
+            message = `<pre class="result-log__content">${message}</pre>`
+        }
     }
     else if (typeof message == 'object') {
 
-        message = JSON.stringify(message, null, 2);
-        // convert message to html
-        message = `<pre class="result-log__content">${message}</pre>`
+        const reg = /DOCTYPE/
+        if (reg.test(message?.data)) {
+            console.log(message?.data)
+        } else {
+
+            message = JSON.stringify(message, null, 2);
+    
+            if (error) {
+    
+                // convert message to html
+                message = `<pre class="result-log__content result-log__content--error">Error: ${message}</pre>`
+            } else {
+                // convert message to html
+                message = `<pre class="result-log__content">${message}</pre>`
+            }
+        }
+
     }
 
     // console.log(message)
@@ -710,4 +750,3 @@ function disableBtn(btn) {
 function enableBtn(btn) {
     btn.disabled = false;
 }
-

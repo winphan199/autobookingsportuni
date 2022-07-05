@@ -1,4 +1,5 @@
 const express = require('express')
+require('dotenv').config()
 const http = require('http')
 const {Server} = require('socket.io')
 const morgan = require('morgan')
@@ -12,8 +13,8 @@ const io = new Server(server, {
     origin: "*"
   }
 });
-const port = 3000
 
+const port = process.env.PORT || 3000
 
 // HTTP logger
 app.use(morgan('combined'))
@@ -25,19 +26,7 @@ app.use(cors())
 app.use(express.json())
 
 
-let toBookList = [];
-
-const generalInfo = {
-  cookie: '',
-  start_date: '', // yyyy-mm-dd
-  end_date: '', // yyyy-mm-dd
-  sportUniLocation: {
-    hervanta: false,
-    center: false,
-    kauppi: false,
-    otherLocations: false
-  }
-}
+const requestList = [];
 
 let isStop = false;
 let isConnected = false;
@@ -46,18 +35,23 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/book', (req, res) => {
-  console.log(req.body)
-  res.send('')
-})
-
 app.post('/book', async (req, res) => {
-
-  isStop = true;
-  isStop = false;
+  console.log(req.body);
+  let toBookList = [];
+  const generalInfo = {
+    cookie: '',
+    start_date: '', // yyyy-mm-dd
+    end_date: '', // yyyy-mm-dd
+    sportUniLocation: {
+      hervanta: false,
+      center: false,
+      kauppi: false,
+      otherLocations: false
+    }
+  }
 
   // get book list
-  toBookList = req.body;
+  toBookList = req.body.requestData;
   if (toBookList.length <= 0) {
     res.status(400).json({
       'status': 'Failed',
@@ -124,36 +118,27 @@ app.post('/book', async (req, res) => {
     }
   }
 
-  // start booking
-
-  // loop until there is available list of bookings
-  let bookCount = 0;
-  do {
-    if (isStop) {
-      break;
-    }
-    bookCount = await startBooking(generalInfo, toBookList, isConnected, io);
-  } while (!isStop && bookCount < 3);
-  console.log("bookTillFull " + bookCount);
-  if (bookCount >= 3) {
-
-    console.log ("ĐÃ BOOK ĐỦ HẾT SÂN!");
+  const requestItem = {
+    socket_id: req.body.socket_id,
+    generalInfo,
+    toBookList
   }
 
+  // start booking
+  const bookCount = await startBooking(requestItem.generalInfo, requestItem.toBookList, isConnected, io, requestItem.socket_id);
+
   res.json({
-    'status': 'OK',
-    'isStop': isStop
+    status: 'OK',
+    bookCount,
   })
 })
 
-app.get('/stop', (req, res) => {
-
-  isStop = true;
-
-  res.json({
-    'status': 'OK',
-  })
+app.get('/book', (req, res) => {
+  // console.log(req.body)
+  res.send('This is book route')
 })
+
+
 
 io.on('connection', (socket) => {
   console.log('a user connected', socket.id);

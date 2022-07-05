@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 const toBookListt = [
   {
     location: 'hervanta',
-    date: '2022-06-10',
+    date: '2022-07-09',
     booking_details: [
       {
         start_time: 11,
@@ -27,7 +27,7 @@ const toBookListt = [
   },
   {
     location: 'hervanta',
-    date: '2022-06-12',
+    date: '2022-07-10',
     booking_details: [
       {
         start_time: 11,
@@ -42,9 +42,9 @@ const toBookListt = [
 ]
 
 const generalInfo = {
-  cookie: '',
-  start_date: '2022-06-10', // yyyy-mm-dd
-  end_date: '2022-06-12', // yyyy-mm-dd
+  cookie: 'wdwdwdw',
+  start_date: '2022-07-09', // yyyy-mm-dd
+  end_date: '2022-07-10', // yyyy-mm-dd
   sportUniLocation: {
     hervanta: true,
     center: false,
@@ -57,18 +57,25 @@ const generalInfo = {
 
 
 
-let startBooking = async ({cookie, start_date, end_date, sportUniLocation}, toBookList, isConnected, io) => {
+let startBooking = async ({cookie, start_date, end_date, sportUniLocation}, toBookList, isConnected, io, socket_id) => {
+  console.log('vao start booking');
   // fetch the calendar to see if there is available courts at that date
-  const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=2&a1=${sportUniLocation.kauppi}&a2=${sportUniLocation.hervanta}&a3=${sportUniLocation.center}&a4=${sportUniLocation.otherLocations}&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
-  let data = await fetch(url_get);
-  data = await data.json();
+  let data;
+  try {
+
+    const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=2&a1=${sportUniLocation.kauppi}&a2=${sportUniLocation.hervanta}&a3=${sportUniLocation.center}&a4=${sportUniLocation.otherLocations}&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
+    data = await fetch(url_get);
+    data = await data.json();
+  } catch (error) {
+    console.log(error)
+  }
 
   // Only start booking when the calendar have date available
-  if (data.length > 1) {
+  if (data != undefined && data.length > 1) {
+    console.log('danh sach ton tai');
+    let shifts = handleShiftList(data, toBookList, isConnected, io, socket_id);
 
-    let shifts = handleShiftList(data, toBookList, isConnected, io);
-
-    return await handleBookCourt(shifts, cookie, isConnected, io);
+    return await handleBookCourt(shifts, cookie, isConnected, io, socket_id);
   }
   else {
     return 0;
@@ -77,12 +84,16 @@ let startBooking = async ({cookie, start_date, end_date, sportUniLocation}, toBo
 }
 
 
-let handleShiftList= (text, toBookList, isConnected, io) => {
+let handleShiftList= (text, toBookList, isConnected, io, socket_id) => {
+  console.log('vao handle shift list')
   // log the available courts at the desired date found
+  console.log('isConnected ' + isConnected);
   if (isConnected) {
 
     console.log(text)
-    io.emit('result log', text)
+    console.log(socket_id)
+    // io.to(socket_id).emit('result log', text)
+    io.to(socket_id).emit('result log', text)
   }
 
   const shifts = text.filter(shift => {
@@ -113,7 +124,7 @@ let handleShiftList= (text, toBookList, isConnected, io) => {
              });
     });
   })
-
+  console.log(shifts)
 
   return shifts.map((shift)=> {
 
@@ -142,7 +153,7 @@ let handleShiftList= (text, toBookList, isConnected, io) => {
     let court_nums = [];
     let total_courts = 0;
 
-    console.log(toBookListItem)
+    // console.log(toBookListItem)
     if (toBookListItem != undefined) {
       console.log(booking_detail);
       court_nums = booking_detail.court_nums;
@@ -161,9 +172,10 @@ let handleShiftList= (text, toBookList, isConnected, io) => {
   })
 }
 
-let handleBookCourt = async (shifts, cookie, isConnected, io) => {
-
+let handleBookCourt = async (shifts, cookie, isConnected, io, socket_id) => {
+  console.log('vao handle book court')
   let bookCount = 0;
+  console.log(shifts)
 
   for(let i = 0; i < shifts.length; i++) {
     const shift = shifts[i];
@@ -175,11 +187,10 @@ let handleBookCourt = async (shifts, cookie, isConnected, io) => {
     const courts =  findCourt(data, shift);
 
     if (isConnected) {
-
-      console.log(courts);
-      io.emit('result log', courts)
+      console.log(courts)
+      io.to(socket_id).emit('result log', courts)
     }
-    bookCount = await bookCourt(courts, cookie, bookCount, isConnected, io);
+    bookCount = await bookCourt(courts, cookie, bookCount, isConnected, io, socket_id);
   }
   return bookCount;
 }
@@ -202,12 +213,16 @@ let findCourt = (text, {court_nums, location, date, start_time}) => {
   })
 }
 
-let bookCourt = async (courts, cookie, succeedBookCount, isConnected, io) => {
+let bookCourt = async (courts, cookie, succeedBookCount, isConnected, io, socket_id) => {
 
 
   for(let i = 0; i < courts.length; i++) {
     const court = courts[i];
     if (court.court_id == -1) {
+      if (isConnected) {
+        console.log('Không book được Court vì Court đã bị book trước!')
+        io.to(socket_id).emit('result log', 'Không book được Court vì Court đã bị book trước!')
+      }
       continue;
     }
 
@@ -225,9 +240,9 @@ let bookCourt = async (courts, cookie, succeedBookCount, isConnected, io) => {
       if (isConnected) {
 
         console.log(data);
-        io.emit('result log', data)
+        // io.to(socket_id).emit('result log', {data})
         console.log(`Book không được sân ${court.court_num}! ngày ${court.date} lúc ${court.start_time} giờ`)
-        io.emit('result log', `Book không được sân ${court.court_num}! ngày ${court.date} lúc ${court.start_time} giờ`)
+        io.to(socket_id).emit('result log', `Book không được sân ${court.court_num}! ngày ${court.date} lúc ${court.start_time} giờ`)
       }
     }
     else {
@@ -237,7 +252,7 @@ let bookCourt = async (courts, cookie, succeedBookCount, isConnected, io) => {
       if (isConnected) {
 
         console.log(`Book sân ${court.court_num} ngày ${court.date} lúc ${court.start_time} giờ thành công!`)
-        io.emit('result log', `Book sân ${court.court_num} ngày ${court.date} lúc ${court.start_time} giờ thành công!`)
+        io.to(socket_id).emit('result log', `Book sân ${court.court_num} ngày ${court.date} lúc ${court.start_time} giờ thành công!`)
       }
       if (succeedBookCount >= 3) {
         break;
@@ -249,7 +264,7 @@ let bookCourt = async (courts, cookie, succeedBookCount, isConnected, io) => {
 }
 
 
-async function bookTillFull({toBookList, generalInfo, isStop}) {
+async function bookTillFull(toBookList, generalInfo) {
   // loop until there is available list of bookings
   let bookCount = 0;
   do {
