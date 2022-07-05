@@ -579,8 +579,8 @@ function deleteBookItemFromBookList(id) {
     handleBookListItem();
 }
 
-// const baseURL = 'https://3.0.148.2.nip.io';
-const baseURL = 'http://localhost:1999';
+const baseURL = 'https://3.0.148.2.nip.io';
+// const baseURL = 'http://localhost:1999';
 let bookRequestToServerInterval;
 let isForceStop = false;
 
