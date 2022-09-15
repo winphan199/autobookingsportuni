@@ -63,7 +63,7 @@ let startBooking = async ({cookie, start_date, end_date, sportUniLocation}, toBo
   let data;
   try {
 
-    const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=2&a1=${sportUniLocation.kauppi}&a2=${sportUniLocation.hervanta}&a3=${sportUniLocation.center}&a4=${sportUniLocation.otherLocations}&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
+    const url_get = `https://www.tuni.fi/sportuni/kalenteri/?lang=en&embedded=1&type=3&a1=${sportUniLocation.kauppi}&a2=${sportUniLocation.hervanta}&a3=${sportUniLocation.center}&a4=${sportUniLocation.otherLocations}&ajax=1&start=${start_date}&end=${end_date}&_=1647456934063`;
     data = await fetch(url_get);
     data = await data.json();
   } catch (error) {
@@ -179,7 +179,7 @@ let handleBookCourt = async (shifts, cookie, isConnected, io, socket_id) => {
 
   for(let i = 0; i < shifts.length; i++) {
     const shift = shifts[i];
-    const url_event = `https://www.tuni.fi/sportuni/kalenteri/showevent.cgi?lang=en&id=${shift.id}`;
+    const url_event = `https://www.tuni.fi/sportuni/kalenteri/?showevent=1&lang=en&embedded=1&id=${shift.id}`;
 
     // Get the available court depending on the shift id
     let data = await fetch(url_event);
